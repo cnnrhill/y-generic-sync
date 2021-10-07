@@ -1,0 +1,46 @@
+{
+  "name": "y-generic-sync",
+  "version": "1.0.0",
+  "description": "Sync Yjs over any communication channel",
+  "sideEffects": false,
+  "funding": {
+    "type": "GitHub Sponsors ❤",
+    "url": "https://github.com/sponsors/cnnrhill"
+  },
+  "main": "./dist/index.js",
+  "files": [
+    "src/*",
+    "dist/*"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cnnrhill/y-generic-sync.git"
+  },
+  "keywords": [
+    "Yjs"
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cnnrhill/y-generic-sync/issues"
+  },
+  "homepage": "https://github.com/cnnrhill/y-generic-sync#readme",
+  "dependencies": {
+    "@types/debug": "^4.1.7",
+    "@types/events": "^3.0.0",
+    "@types/node": "^16.10.2",
+    "broadcast-channel": "^4.2.0",
+    "debug": "^4.3.2",
+    "events": "^3.3.0",
+    "lib0": "^0.2.42",
+    "lodash.debounce": "^4.0.8",
+    "y-protocols": "^1.0.5"
+  },
+  "devDependencies": {
+    "standard": "^12.0.1",
+    "typescript": "^3.9.9",
+    "yjs": "^13.5.0"
+  },
+  "peerDependencies": {
+    "yjs": "^13.5.6"
+  }
+}
