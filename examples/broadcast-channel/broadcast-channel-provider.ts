@@ -1,4 +1,3 @@
-import {EventEmitter} from "events";
 import {BroadcastChannel} from 'broadcast-channel';
 import * as Y from "yjs";
 import * as awarenessProtocol from "y-protocols/awareness";
@@ -21,7 +20,7 @@ export default class BroadcastChannelProvider extends GenericSyncProvider {
         this.broadcastChannel = new BroadcastChannel(room);
 
         this.on('broadcast', (message: Uint8Array, origin: number) => {
-            this.broadcastChannel.postMessage({origin, message}).then(() => {});
+            this.broadcastChannel.postMessage({ message, origin }).then(() => {});
         });
 
         this.broadcastChannel.onmessage = (wrapper: MessageWrapper) => {
