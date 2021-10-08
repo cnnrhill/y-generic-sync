@@ -33,9 +33,7 @@ This library is a work in progress.
     syncProvider.onConnect();
 
     myCustomChannelImplementation.on('message', (bytes, origin) => {
-        if (origin !== syncProvider.id) {
-            syncProvider.onMessage(bytes);
-        }
+        syncProvider.onMessage(bytes, origin);
     });
 
     syncProvider.onDisconnect();
