@@ -7,8 +7,9 @@
     "rootDir": "./src",
     "strict": true,
     "noImplicitAny": false,
-    "moduleResolution": "node",
+    "module": "commonjs",
     "esModuleInterop": true
   },
-  "include": ["./src/index.ts"]
+  "include": ["./src/**/*"],
+  "exclude": ["./node_modules"],
 }

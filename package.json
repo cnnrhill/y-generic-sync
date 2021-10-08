@@ -26,7 +26,6 @@
   },
   "homepage": "https://github.com/cnnrhill/y-generic-sync#readme",
   "dependencies": {
-    "broadcast-channel": "^4.2.0",
     "debug": "^4.3.2",
     "events": "^3.3.0",
     "lib0": "^0.2.42",
@@ -36,8 +35,7 @@
     "@types/debug": "^4.1.7",
     "@types/events": "^3.0.0",
     "@types/node": "^16.10.2",
-    "standard": "^12.0.1",
-    "typescript": "^3.9.9",
+    "typescript": "^3.9.10",
     "yjs": "^13.5.0"
   },
   "peerDependencies": {
