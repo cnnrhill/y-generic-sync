@@ -25,7 +25,8 @@ This library is a work in progress.
     const syncProvider = new GenericSyncProvider(doc);
 
     syncProvider.on('broadcast', (bytes, origin) => {
-        // implement your own code to broadcast `bytes` (a Uint8Array) to all peers
+        // Implement your own code to broadcast `bytes` (a Uint8Array).
+        // Be sure to send the message to all peers.
     });
 
     // use callbacks to pass messages and other events into the sync provider:
@@ -37,3 +38,5 @@ This library is a work in progress.
     });
 
     syncProvider.onDisconnect();
+
+See the `examples` folder for a complete sample implementation using BroadcastChannel to sync between browser tabs.
