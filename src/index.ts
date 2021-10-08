@@ -14,25 +14,31 @@ import {
     MessageType
 } from "./message-types";
 
+export interface GenericSyncProviderConfig {
+    awareness?: awarenessProtocol.Awareness,
+    resyncInterval?: number,
+}
+
 export default class GenericSyncProvider extends EventEmitter {
     private awareness: awarenessProtocol.Awareness;
     private _synced: boolean = false;
     public connected = false;
     private resyncInterval: NodeJS.Timer|undefined;
     protected logger: debug.Debugger;
+    public readonly id: number;
 
     private callbacks = {
         onDocumentUpdate: (update, origin) => {
             if (origin !== this) {
                 this.logger("document updated locally, broadcasting update to peers");
-                this.emit("broadcast", createUpdateMessage(update));
+                this.emit("broadcast", createUpdateMessage(update), this.id);
             }
         },
 
         onAwarenessUpdate: ({added, updated, removed}) => {
             const changedClients = added.concat(updated).concat(removed);
             const awarenessUpdate = awarenessProtocol.encodeAwarenessUpdate(this.awareness, changedClients);
-            this.emit("broadcast", createAwarenessUpdateMessage(awarenessUpdate));
+            this.emit("broadcast", createAwarenessUpdateMessage(awarenessUpdate), this.id);
         },
 
         removeSelfFromAwarenessOnUnload: () => {
@@ -40,16 +46,15 @@ export default class GenericSyncProvider extends EventEmitter {
         },
     };
 
-    constructor(private doc: Y.Doc, private config = {
-        awareness: new awarenessProtocol.Awareness(doc),
-        resyncInterval: -1,
-    }) {
+    constructor(private doc: Y.Doc, private config: GenericSyncProviderConfig) {
         super();
+
+        this.id = doc.clientID;
 
         this.logger = debug("y-" + doc.clientID);
         this.logger("initializing");
 
-        this.awareness = this.config.awareness;
+        this.awareness = this.config.awareness || new awarenessProtocol.Awareness(doc);
 
         this.doc.on('update', this.callbacks.onDocumentUpdate);
         this.awareness.on('update', this.callbacks.onAwarenessUpdate);
@@ -57,7 +62,7 @@ export default class GenericSyncProvider extends EventEmitter {
         if (this.config.resyncInterval && this.config.resyncInterval > 0) {
             this.resyncInterval = setInterval(() => {
                 this.logger("resyncing (resync interval elapsed)");
-                this.emit("broadcast", createSyncStep1Message(this.doc));
+                this.emit("broadcast", createSyncStep1Message(this.doc), this.id);
             }, this.config.resyncInterval);
         }
 
@@ -95,11 +100,11 @@ export default class GenericSyncProvider extends EventEmitter {
 
         this.emit('status', [{status: "connected"}]);
 
-        this.emit("broadcast", createSyncStep1Message(this.doc));
+        this.emit("broadcast", createSyncStep1Message(this.doc), this.id);
 
         if (this.awareness.getLocalState() !== null) {
             const awarenessUpdate = awarenessProtocol.encodeAwarenessUpdate(this.awareness, [this.doc.clientID]);
-            this.emit("broadcast", createAwarenessUpdateMessage(awarenessUpdate));
+            this.emit("broadcast", createAwarenessUpdateMessage(awarenessUpdate), this.id);
         }
     }
 
@@ -120,7 +125,13 @@ export default class GenericSyncProvider extends EventEmitter {
         }
     }
 
-    public onMessage(message: Uint8Array) {
+    public onMessage(message: Uint8Array, origin: number) {
+        if (origin === this.id) {
+            return;
+        }
+
+        this.logger(`received ${message.byteLength} bytes from ${origin}`);
+
         const emitSynced = true;
         const decoder = decoding.createDecoder(message);
         const messageType = decoding.readVarUint(decoder);
@@ -161,7 +172,7 @@ export default class GenericSyncProvider extends EventEmitter {
 
         if (response) {
             this.logger("sync protocol returned a response message to be broadcast");
-            this.emit("broadcast", response);
+            this.emit("broadcast", response, this.id);
         }
     }
 
