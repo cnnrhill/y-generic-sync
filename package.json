@@ -1,6 +1,6 @@
 {
   "name": "y-generic-sync",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Sync Yjs over any communication channel",
   "sideEffects": false,
   "funding": {
