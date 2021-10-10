@@ -29,17 +29,17 @@ This library is a work in progress and the API may change in future versions.
         // Be sure to send the message to all peers.
     });
 
+    // When messages are received from peers, pass them into the sync provider
+    myCustomChannelImplementation.on('message', (bytes, origin) => {
+        syncProvider.onMessage(bytes, origin);
+    });
+
     // Call onConnecting() when the communication channel is being set up
     syncProvider.onConnecting();
     
     // Call onConnect() once the communication channel is open and messages can be sent/received.
     // This function kicks off the sync process.
     syncProvider.onConnect();
-
-    // When messages are received from peers, pass them into the sync provider
-    myCustomChannelImplementation.on('message', (bytes, origin) => {
-        syncProvider.onMessage(bytes, origin);
-    });
 
     // Call onDisconnect() when the communication channel closes
     syncProvider.onDisconnect();

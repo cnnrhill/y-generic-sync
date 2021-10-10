@@ -31,14 +31,14 @@ export default class GenericSyncProvider extends EventEmitter {
         onDocumentUpdate: (update, origin) => {
             if (origin !== this) {
                 this.logger("document updated locally, broadcasting update to peers");
-                this.emit("broadcast", createUpdateMessage(update), this.id);
+                this.emit("broadcast", createUpdateMessage(update));
             }
         },
 
         onAwarenessUpdate: ({added, updated, removed}) => {
             const changedClients = added.concat(updated).concat(removed);
             const awarenessUpdate = awarenessProtocol.encodeAwarenessUpdate(this.awareness, changedClients);
-            this.emit("broadcast", createAwarenessUpdateMessage(awarenessUpdate), this.id);
+            this.emit("broadcast", createAwarenessUpdateMessage(awarenessUpdate));
         },
 
         removeSelfFromAwarenessOnUnload: () => {
@@ -62,7 +62,7 @@ export default class GenericSyncProvider extends EventEmitter {
         if (this.config.resyncInterval && this.config.resyncInterval > 0) {
             this.resyncInterval = setInterval(() => {
                 this.logger("resyncing (resync interval elapsed)");
-                this.emit("broadcast", createSyncStep1Message(this.doc), this.id);
+                this.emit("broadcast", createSyncStep1Message(this.doc));
             }, this.config.resyncInterval);
         }
 
@@ -100,11 +100,11 @@ export default class GenericSyncProvider extends EventEmitter {
 
         this.emit('status', [{status: "connected"}]);
 
-        this.emit("broadcast", createSyncStep1Message(this.doc), this.id);
+        this.emit("broadcast", createSyncStep1Message(this.doc));
 
         if (this.awareness.getLocalState() !== null) {
             const awarenessUpdate = awarenessProtocol.encodeAwarenessUpdate(this.awareness, [this.doc.clientID]);
-            this.emit("broadcast", createAwarenessUpdateMessage(awarenessUpdate), this.id);
+            this.emit("broadcast", createAwarenessUpdateMessage(awarenessUpdate));
         }
     }
 
@@ -125,12 +125,8 @@ export default class GenericSyncProvider extends EventEmitter {
         }
     }
 
-    public onMessage(message: Uint8Array, origin: number) {
-        if (origin === this.id) {
-            return;
-        }
-
-        this.logger(`received ${message.byteLength} bytes from ${origin}`);
+    public onMessage(message: Uint8Array) {
+        this.logger(`received ${message.byteLength} bytes from peer`);
 
         const emitSynced = true;
         const decoder = decoding.createDecoder(message);
@@ -172,7 +168,7 @@ export default class GenericSyncProvider extends EventEmitter {
 
         if (response) {
             this.logger("sync protocol returned a response message to be broadcast");
-            this.emit("broadcast", response, this.id);
+            this.emit("broadcast", response);
         }
     }
 

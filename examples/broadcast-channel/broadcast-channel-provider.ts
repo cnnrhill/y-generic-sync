@@ -19,12 +19,17 @@ export default class BroadcastChannelProvider extends GenericSyncProvider {
 
         this.broadcastChannel = new BroadcastChannel(room);
 
-        this.on('broadcast', (message: Uint8Array, origin: number) => {
-            this.broadcastChannel.postMessage({ message, origin }).then(() => {});
+        this.on('broadcast', (message: Uint8Array) => {
+            this.broadcastChannel.postMessage({
+                message,
+                origin: doc.clientID,
+            }).then(() => {});
         });
 
         this.broadcastChannel.onmessage = (wrapper: MessageWrapper) => {
-            this.onMessage(wrapper.message, wrapper.origin);
+            if (wrapper.origin !== doc.clientID) {
+                this.onMessage(wrapper.message);
+            }
         }
 
         this.onConnecting();
