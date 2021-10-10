@@ -24,14 +24,14 @@ This library is a work in progress and the API may change in future versions.
 
     const syncProvider = new GenericSyncProvider(doc);
 
-    syncProvider.on('broadcast', (bytes, origin) => {
+    syncProvider.on('broadcast', (bytes) => {
         // Implement your own code to broadcast `bytes` (a Uint8Array).
-        // Be sure to send the message to all peers.
+        // Be sure to send the message to all other peer.
     });
 
-    // When messages are received from peers, pass them into the sync provider
-    myCustomChannelImplementation.on('message', (bytes, origin) => {
-        syncProvider.onMessage(bytes, origin);
+    // When messages are received from other peers, pass them into the sync provider
+    myCustomChannelImplementation.on('message', bytes => {
+        syncProvider.onMessage(bytes);
     });
 
     // Call onConnecting() when the communication channel is being set up
