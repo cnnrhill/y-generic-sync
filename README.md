@@ -26,7 +26,7 @@ This library is a work in progress and the API may change in future versions.
 
     syncProvider.on('broadcast', (bytes) => {
         // Implement your own code to broadcast `bytes` (a Uint8Array).
-        // Be sure to send the message to all other peer.
+        // Be sure to send the message to all other peers.
     });
 
     // When messages are received from other peers, pass them into the sync provider
